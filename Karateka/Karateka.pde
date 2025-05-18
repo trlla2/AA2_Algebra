@@ -7,12 +7,22 @@ void setup(){
     fondo = loadImage("Fondo.png");
     noSmooth(); // Desactiva interpolación borrosa
     player = new Player();
+    
+     buffer = createGraphics(width, height); //initialize buffer
 }
 
 void draw(){
-  image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
+  
   player.update();
+  
+  
+  buffer.beginDraw(); // start buffer (todo lo que se tenga de printar tiene que estar dentro del buffer)
+  // todo lo que se tiene que printar se tiene que poner antes un buffer (buffer.rect(...))
+  buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
   player.display();
+  
+  buffer.endDraw(); // fin del buffer
+  ColorFilter(255, 255, 255); 
 }
 
 void keyPressed() {
