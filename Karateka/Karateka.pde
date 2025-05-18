@@ -1,28 +1,42 @@
-// Fondo
 PImage fondo;
 
 Player player;
-void setup(){
-    size(1024,768);
-    fondo = loadImage("Fondo.png");
-    noSmooth(); // Desactiva interpolación borrosa
-    player = new Player();
-    
-     buffer = createGraphics(width, height); //initialize buffer
+Enemy enemy;
+
+void setup() {
+  size(1024, 768);
+  fondo = loadImage("Fondo.png");
+  noSmooth(); // Desactiva suavizado para pixel art
+  buffer = createGraphics(width, height);
+
+  player = new Player();
+  enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
 }
 
-void draw(){
-  
+void draw() {
+  buffer.beginDraw();
+
+  // Dibuja fondo
+  buffer.image(fondo, 0, 0, width, height);
+
+  // Actualización y dibujo de jugador
   player.update();
-  
-  
-  buffer.beginDraw(); // start buffer (todo lo que se tenga de printar tiene que estar dentro del buffer)
-  // todo lo que se tiene que printar se tiene que poner antes un buffer (buffer.rect(...))
-  buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
   player.display();
-  
-  buffer.endDraw(); // fin del buffer
-  ColorFilter(255, 255, 255); 
+
+  // Actualización y dibujo del enemigo con IA
+  enemy.update(player);
+  enemy.display();
+
+  // Comprobar si golpea al enemigo
+  if (enemy.isHitBy(player)) {
+    enemy.receiveHit(player);
+  }
+
+
+  buffer.endDraw();
+
+  // Pintar buffer en pantalla
+  image(buffer, 0, 0);
 }
 
 void keyPressed() {
@@ -32,13 +46,13 @@ void keyPressed() {
   if (key == ' ') player.jump();
 }
 
+void keyReleased() {
+  if (key == 'a' || key == 'A') player.moveLeft = false;
+  if (key == 'd' || key == 'D') player.moveRight = false;
+}
+
 void mousePressed() {
   if (mouseButton == LEFT) {
     player.attack();
   }
-}
-
-void keyReleased() {
-  if (key == 'a' || key == 'A') player.moveLeft = false;
-  if (key == 'd' || key == 'D') player.moveRight = false;
 }
