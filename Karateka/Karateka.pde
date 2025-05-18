@@ -1,6 +1,8 @@
 // Fondo
 PImage fondo;
 
+Obstacle obstacle;
+
 Player player;
 void setup(){
     size(1024,768);
@@ -8,19 +10,21 @@ void setup(){
     noSmooth(); // Desactiva interpolación borrosa
     player = new Player();
     
-     buffer = createGraphics(width, height); //initialize buffer
+    obstacle = new Obstacle();
+    
+    buffer = createGraphics(width, height); //initialize buffer
 }
 
 void draw(){
   
   player.update();
-  
+  obstacle.update();
   
   buffer.beginDraw(); // start buffer (todo lo que se tenga de printar tiene que estar dentro del buffer)
   // todo lo que se tiene que printar se tiene que poner antes un buffer (buffer.rect(...))
   buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
   player.display();
-  
+  obstacle.display(buffer);
   buffer.endDraw(); // fin del buffer
   ColorFilter(255, 255, 255); 
 }
