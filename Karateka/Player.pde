@@ -123,7 +123,7 @@ class Player {
         y = jumpEndY;
       }
       currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
-      x = constrain(x, 0, width - getCurrentFrames()[currentFrame].width * scaleFactor);
+      x = constrain(x, getCurrentFrames()[currentFrame].width * scaleFactor / 2, width - getCurrentFrames()[currentFrame].width * scaleFactor);
       return;
     }
 
@@ -147,7 +147,8 @@ class Player {
       frameCounter = 0;
     }
     currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
-    x = constrain(x, 0, width - getCurrentFrames()[currentFrame].width * scaleFactor);
+    x = constrain(x, getCurrentFrames()[currentFrame].width * scaleFactor / 2, width - getCurrentFrames()[currentFrame].width * scaleFactor);
+
   }
 
   void display() {
@@ -159,12 +160,12 @@ class Player {
 
   if (!facingRight) {
     pushMatrix();
-    translate(x + newW / 2, y);
+    translate(x/ 2, y);
     scale(-1, 1);
-    image(img, -newW / 2, 0, newW, newH);
+    buffer.image(img, -newW, 0, newW, newH);
     popMatrix();
   } else {
-    image(img, x, y, newW, newH);
+    buffer.image(img, x, y, newW, newH);
   }
 }
 
