@@ -1,9 +1,26 @@
 // Fondo
 PImage fondo;
+int stage = 1;
+int limitStage = 800;
 
 Obstacle obstacle;
 
 Player player;
+
+void StageRestart(){
+  player.x =  width - 800;
+  player.y = height - 320;
+}
+
+void StageUpdate(){
+  player.update();
+  obstacle.update();
+  
+  buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
+  player.display();
+  obstacle.display(buffer);
+}
+
 void setup(){
     size(1024,768);
     fondo = loadImage("Fondo.png");
@@ -16,18 +33,19 @@ void setup(){
 }
 
 void draw(){
-  
-  player.update();
-  obstacle.update();
-  
   buffer.beginDraw(); // start buffer (todo lo que se tenga de printar tiene que estar dentro del buffer)
   // todo lo que se tiene que printar se tiene que poner antes un buffer (buffer.rect(...))
-  buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
-  player.display();
-  obstacle.display(buffer);
+  StageUpdate();
+  
+  if(player.x > limitStage){ // si llega al final del escenario
+    println("ChangeStage");
+    StageRestart();
+  }
+  
   buffer.endDraw(); // fin del buffer
   ColorFilter(255, 255, 255); 
 }
+
 
 void keyPressed() {
   if (key == 'a' || key == 'A') player.moveLeft = true;
