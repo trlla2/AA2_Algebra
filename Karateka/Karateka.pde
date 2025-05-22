@@ -36,7 +36,7 @@ void StageRestart() {
   player.y = height - 320;
   
   
-  if(stage > 5){ // spawn el fantasma y el enemigo
+  if(stage > 9){ // spawn el fantasma y el enemigo
       obstacle.restart();
       enemy.resetEnemy(700, height - 320);
 
@@ -46,6 +46,10 @@ void StageRestart() {
   }
   else{ // impar spawnea el fantasma
       obstacle.restart();
+      enemy.alive = false; // Oculta al enemigo
+      enemy.state = "death";
+      enemy.currentFrame = enemy.getCurrentFrames().length - 1;
+      enemy.x = -9999;
   }
 
   sStageStart.play();
