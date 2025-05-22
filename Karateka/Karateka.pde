@@ -26,6 +26,18 @@ void setup() {
 void StageRestart(){
   player.x =  width - 800;
   player.y = height - 320;
+  
+  
+  if(stage > 5){ // spawn el fantasma y el enemigo
+      obstacle.restart();
+
+  }
+  else if(stage % 2 == 0){ // par spawnea el enemigo
+    
+  }
+  else{ // impar spawnea el fantasma
+      obstacle.restart();
+  }
 }
 
 void StageUpdate(){
