@@ -1,41 +1,61 @@
 class Obstacle {
   int curve_estate = 1; 
+  boolean forward = false;
   PVector position;
   float u;
   PImage sprite;
   
   Interpolation_curve first_curve;
   Interpolation_curve second_curve;
-  
+  Interpolation_curve third_curve;
+  Interpolation_curve fourth_curve;
+
   
   Obstacle(){
      position = new PVector(); 
      sprite = loadImage("Data/Ghost.png");
     
-     PVector p[], q[]; // -> u
+     PVector p[], q[], w[], k[];; // -> u
      p = new PVector[4];
-     p[0] = new PVector(200,100); // P0
-     p[1] = new PVector(350,300); // P1
-     p[2] = new PVector(500,300); // P2
-     p[3] = new PVector(650,100); // P3
-      
+     
+     p[0] = new PVector(150, 448);  
+     p[1] = new PVector(200, 548);  
+     p[2] = new PVector(250, 548);  
+     p[3] = new PVector(300, 448);  
+    
      q = new PVector[4];
-     q[0] = new PVector(650,100); //  P0 
-     q[1] = new PVector(500,300); //  P1
-     q[2] = new PVector(350,300); //  P2
-     q[3] = new PVector(200,100); // P3
      
+     q[0] = new PVector(300, 448); 
+     q[1] = new PVector(350, 348);  
+     q[2] = new PVector(400, 348);  
+     q[3] = new PVector(450, 448);  
+      
+     w = new PVector[4];
      
+     w[0] = new PVector(450, 448);  
+     w[1] = new PVector(500, 548);  
+     w[2] = new PVector(550, 548);  
+     w[3] = new PVector(600, 448);  
+     
+     k = new PVector[4];
+     
+     k[0] = new PVector(600, 448);  
+     k[1] = new PVector(700, 348);  
+     k[2] = new PVector(750, 348);  
+     k[3] = new PVector(800, 448);  
      
      
      // create the curves
     first_curve = new Interpolation_curve(p);
     second_curve = new Interpolation_curve(q);
-    
+    third_curve = new Interpolation_curve(w);
+    fourth_curve = new Interpolation_curve(k);
     
     // calculate cofs
     first_curve.calculate_coefs();
     second_curve.calculate_coefs();
+    third_curve.calculate_coefs();
+    fourth_curve.calculate_coefs();
     
     
   }
@@ -57,21 +77,60 @@ class Obstacle {
         second_curve.coefs[2].y * u * u +
         second_curve.coefs[3].y * u * u * u;
     }
-    
-    
-    u += 0.01;
-    if(u >= 1){
-      curve_estate ++;
-      u = 0;
-      if(curve_estate > 2)// curvas{
-        curve_estate = 1; // curva p
+    else if(curve_estate == 3){// q(u)
+      position.x = third_curve.coefs[0].x + third_curve.coefs[1].x * u +
+        third_curve.coefs[2].x * u * u +
+        third_curve.coefs[3].x * u * u * u;
+      position.y = second_curve.coefs[0].y + third_curve.coefs[1].y * u +
+        third_curve.coefs[2].y * u * u +
+        third_curve.coefs[3].y * u * u * u;
     }
+    else if(curve_estate == 4){// q(u)
+      position.x = fourth_curve.coefs[0].x + fourth_curve.coefs[1].x * u +
+        fourth_curve.coefs[2].x * u * u +
+        fourth_curve.coefs[3].x * u * u * u;
+      position.y = fourth_curve.coefs[0].y + fourth_curve.coefs[1].y * u +
+        fourth_curve.coefs[2].y * u * u +
+        fourth_curve.coefs[3].y * u * u * u;
+    }
+    
+    float uStep = forward ? 0.02 : -0.02;
+    
+    u += uStep;
+    
+    if(forward){
+      if(u >= 1){
+        if(curve_estate >= 4){
+           forward = false;     // Cambiar dirección
+           u = 1 - uStep;      // Mantener posición en el límite
+        } else {
+          curve_estate++;
+          u = 0;
+        }
+      }
+    } else {
+      if(u <= 0){
+        if(curve_estate <= 1){
+          forward = true;      // Cambiar dirección
+          u = -uStep;          // Mantener posición en el límite
+        } else {
+          curve_estate--;
+          u = 1;
+        }
+      }
+    }
+    println(curve_estate, u);
   }
   
   // pintarlo
-  void display(PGraphics buffer){
-    imageMode(CENTER); 
-    buffer.image(sprite, position.x, position.y, 100, 100);
+  void display(){
+    buffer.pushMatrix(); 
+    buffer.translate(position.x, position.y); 
+    buffer.imageMode(CENTER);
+    buffer.image(sprite, 0, 0, 100, 100);
     imageMode(CORNER); // reset image mode
+    buffer.imageMode(CORNER);
+    buffer.popMatrix(); 
   }
+  
 }
