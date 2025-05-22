@@ -94,6 +94,7 @@ void StageUpdate(){
   // Cambio de fase
   if (player.x > limitStage) {
     println("ChangeStage");
+    obstacle.isAlive = false;
     StageRestart();
     stage++;
   }
