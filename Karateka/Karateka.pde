@@ -1,29 +1,63 @@
-// Fondo
 PImage fondo;
+int stage = 1;
+int limitStage = 800;
+
+Obstacle obstacle;
 
 Player player;
-void setup(){
-    size(1024,768);
-    fondo = loadImage("Fondo.png");
-    noSmooth(); // Desactiva interpolación borrosa
-    player = new Player();
-    
-     buffer = createGraphics(width, height); //initialize buffer
+Enemy enemy;
+
+void setup() {
+  size(1024, 768);
+  fondo = loadImage("Fondo.png");
+  noSmooth(); // Desactiva suavizado para pixel art
+  buffer = createGraphics(width, height);
+  obstacle = new Obstacle();
+  player = new Player();
+  enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
+}
+void StageRestart(){
+  player.x =  width - 800;
+  player.y = height - 320;
 }
 
-void draw(){
-  
+void StageUpdate(){
+  // Update 
+  // Actualización y dibujo de jugador
   player.update();
+  // Actualización y dibujo del enemigo con IA
+  enemy.update(player);
   
+  // Comprobar si golpea al enemigo
+  if (enemy.isHitBy(player)) {
+    enemy.receiveHit(player);
+  }
+
+  if(player.x > limitStage){ // si llega al final del escenario
+    println("ChangeStage");
+    StageRestart();
+    stage ++;
+  }
   
-  buffer.beginDraw(); // start buffer (todo lo que se tenga de printar tiene que estar dentro del buffer)
-  // todo lo que se tiene que printar se tiene que poner antes un buffer (buffer.rect(...))
-  buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
+  // Dibujar
+  buffer.image(fondo, 0, 0, width, height);
   player.display();
+  enemy.display();
+  player.display();
+
+  obstacle.display(buffer);
+}
+
+
+void draw() {
+  buffer.beginDraw();
+
+  StageUpdate();
   
   buffer.endDraw(); // fin del buffer
-  ColorFilter(255, 255, 255); 
+  ColorFilter(255, 255, 255);  // setear color filter al frame
 }
+
 
 void keyPressed() {
   if (key == 'a' || key == 'A') player.moveLeft = true;
@@ -32,13 +66,13 @@ void keyPressed() {
   if (key == ' ') player.jump();
 }
 
+void keyReleased() {
+  if (key == 'a' || key == 'A') player.moveLeft = false;
+  if (key == 'd' || key == 'D') player.moveRight = false;
+}
+
 void mousePressed() {
   if (mouseButton == LEFT) {
     player.attack();
   }
-}
-
-void keyReleased() {
-  if (key == 'a' || key == 'A') player.moveLeft = false;
-  if (key == 'd' || key == 'D') player.moveRight = false;
 }
