@@ -1,4 +1,8 @@
 PImage fondo;
+int stage = 1;
+int limitStage = 800;
+
+Obstacle obstacle;
 
 Player player;
 Enemy enemy;
@@ -8,36 +12,52 @@ void setup() {
   fondo = loadImage("Fondo.png");
   noSmooth(); // Desactiva suavizado para pixel art
   buffer = createGraphics(width, height);
-
+  obstacle = new Obstacle();
   player = new Player();
   enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
 }
+void StageRestart(){
+  player.x =  width - 800;
+  player.y = height - 320;
+}
 
-void draw() {
-  buffer.beginDraw();
-
-  // Dibuja fondo
-  buffer.image(fondo, 0, 0, width, height);
-
+void StageUpdate(){
+  // Update 
   // Actualización y dibujo de jugador
   player.update();
-  player.display();
-
   // Actualización y dibujo del enemigo con IA
   enemy.update(player);
-  enemy.display();
-
+  
   // Comprobar si golpea al enemigo
   if (enemy.isHitBy(player)) {
     enemy.receiveHit(player);
   }
 
+  if(player.x > limitStage){ // si llega al final del escenario
+    println("ChangeStage");
+    StageRestart();
+    stage ++;
+  }
+  
+  // Dibujar
+  buffer.image(fondo, 0, 0, width, height);
+  player.display();
+  enemy.display();
+  player.display();
 
-  buffer.endDraw();
-
-  // Pintar buffer en pantalla
-  image(buffer, 0, 0);
+  obstacle.display(buffer);
 }
+
+
+void draw() {
+  buffer.beginDraw();
+
+  StageUpdate();
+  
+  buffer.endDraw(); // fin del buffer
+  ColorFilter(255, 255, 255);  // setear color filter al frame
+}
+
 
 void keyPressed() {
   if (key == 'a' || key == 'A') player.moveLeft = true;
