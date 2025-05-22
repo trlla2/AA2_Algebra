@@ -27,6 +27,8 @@ void StageUpdate(){
   player.update();
   // Actualización y dibujo del enemigo con IA
   enemy.update(player);
+  // update 
+  obstacle.update();
   
   // Comprobar si golpea al enemigo
   if (enemy.isHitBy(player)) {
@@ -43,9 +45,7 @@ void StageUpdate(){
   buffer.image(fondo, 0, 0, width, height);
   player.display();
   enemy.display();
-  player.display();
-
-  obstacle.display(buffer);
+  obstacle.display();
 }
 
 
