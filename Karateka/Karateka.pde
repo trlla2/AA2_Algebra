@@ -37,10 +37,11 @@ void StageRestart() {
   
   if(stage > 5){ // spawn el fantasma y el enemigo
       obstacle.restart();
+      enemy.resetEnemy(700, height - 320);
 
   }
   else if(stage % 2 == 0){ // par spawnea el enemigo
-    
+      enemy.resetEnemy(700, height - 320);
   }
   else{ // impar spawnea el fantasma
       obstacle.restart();
@@ -48,7 +49,6 @@ void StageRestart() {
 
   sStageStart.play();
   levelStarting = true; // Bloquea movimiento
-  enemy.resetEnemy(700, height - 320);
 }
 
 
