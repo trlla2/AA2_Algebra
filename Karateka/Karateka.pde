@@ -30,9 +30,7 @@ void StageRestart(){
 
 void StageUpdate(){
   // Update 
-  // Actualización y dibujo de jugador
   player.update();
-  // Actualización y dibujo del enemigo con IA
   enemy.update(player);
   // update 
   obstacle.update();
@@ -42,18 +40,43 @@ void StageUpdate(){
     enemy.receiveHit(player);
   }
 
-  if(player.x > limitStage){ // si llega al final del escenario
+  // DETECCIÓN DE COLISIÓN ENEMIGO → JUGADOR
+  if (enemy.alive) {
+    float pw = player.getCurrentFrames()[player.currentFrame].width * player.scaleFactor;
+    float ph = player.getCurrentFrames()[player.currentFrame].height * player.scaleFactor;
+
+    float ew = enemy.w;
+    float eh = enemy.h;
+
+    float px = player.x;
+    float py = player.y;
+    float ex = enemy.x;
+    float ey = enemy.y;
+
+    boolean touching = px + pw > ex &&
+                       px < ex + ew &&
+                       py + ph > ey &&
+                       py < ey + eh;
+
+    if (touching) {
+      player.receiveDamage();
+    }
+  }
+
+  // Cambio de fase
+  if (player.x > limitStage) {
     println("ChangeStage");
     StageRestart();
-    stage ++;
+    stage++;
   }
-  
-  // Dibujar
+
+  // Dibujo
   buffer.image(fondo, 0, 0, width, height);
   player.display();
   enemy.display();
   obstacle.display();
 }
+
 
 
 void draw() {
