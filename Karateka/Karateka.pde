@@ -1,6 +1,10 @@
 PImage fondo;
 int stage = 1;
 int limitStage = 800;
+boolean levelStarting = true;
+PFont font;
+import processing.sound.*;
+SoundFile sStageStart;
 
 Obstacle obstacle;
 
@@ -13,13 +17,22 @@ void setup() {
   noSmooth(); // Desactiva suavizado para pixel art
   buffer = createGraphics(width, height);
   obstacle = new Obstacle();
-  player = new Player();
-  enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
+  player = new Player(this);
+  enemy = new Enemy(this, 700, height - 320);
+  sStageStart = new SoundFile(this, "Inicio_Karateka.wav");
+  sStageStart.play(); // Sonar al empezar el primer nivel
+  font = createFont("font.TTF", 128);
 }
-void StageRestart(){
-  player.x =  width - 800;
+void StageRestart() {
+  player.x = width - 800;
   player.y = height - 320;
+
+  sStageStart.play();
+  levelStarting = true; // Bloquea movimiento
+  enemy.resetEnemy(700, height - 320);
 }
+
+
 
 void StageUpdate(){
   // Update 
@@ -30,8 +43,10 @@ void StageUpdate(){
   
   // Comprobar si golpea al enemigo
   if (enemy.isHitBy(player)) {
+    player.sAttackHit.play(); // Sobrescribe sonido de impacto
     enemy.receiveHit(player);
   }
+
 
   // DETECCIÓN DE COLISIÓN ENEMIGO → JUGADOR
   if (enemy.alive) {
@@ -75,10 +90,28 @@ void StageUpdate(){
 void draw() {
   buffer.beginDraw();
 
-  StageUpdate();
+  // Si el nivel está empezando, espera a que termine el sonido
+  if (!levelStarting) {
+    StageUpdate();
+  } else {
+    buffer.image(fondo, 0, 0, width, height);
+    
+    
+    buffer.textFont(font);
+    buffer.textAlign(CENTER);
+    buffer.textSize(80);
+    buffer.fill(255);
+    buffer.text("Preparate", width/2, height/2);
+    
+    // Si la música ya no suena, desbloquear
+    if (!sStageStart.isPlaying()) {
+      levelStarting = false;
+    }
+  }
   
-  buffer.endDraw(); // fin del buffer
-  ColorFilter(255, 255, 255);  // setear color filter al frame
+  buffer.endDraw();
+  ColorFilter(255, 255, 255);
+
 }
 
 
