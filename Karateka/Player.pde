@@ -1,3 +1,5 @@
+import processing.sound.*;
+
 class Player {
   float x, y;
   float speed = 3;
@@ -33,17 +35,31 @@ class Player {
   int damageCooldown = 120;
   int damageCounter = 0;
   boolean damagedRecently = false;
+  
+  // Sonidos
+  SoundFile sAttackHit;
+  SoundFile sAttackMiss;
+  SoundFile sDeath;
 
-  Player() {
+
+  PApplet app;
+
+  Player(PApplet app) {
+    this.app = app;
     x = width - 800;
     y = height - 320;
-
+  
     idleFrames   = loadSprites("idle.png", 3);
     runFrames    = loadSprites("run.png", 12);
     attackFrames = loadSprites("light-attack.png", 7);
     deathFrames  = loadSprites("death.png", 11);
     jumpFrames   = loadSprites("jump.png", 4);
+  
+    sAttackHit  = new SoundFile(app, "Ataque_Karateka.wav");
+    sAttackMiss = new SoundFile(app, "Ataque_Fallido_Karateka.wav");
+    sDeath      = new SoundFile(app, "Muerte_Karateka.wav");
   }
+
 
   PImage[] loadSprites(String file, int total) {
     PImage sheet = loadImage(file);
@@ -72,16 +88,21 @@ class Player {
       state = "attack";
       currentFrame = 0;
       frameCounter = 0;
+  
+      sAttackMiss.play(); // Se reproduce siempre, se sobrescribe si acierta
     }
   }
+
 
   void die() {
     if (!state.equals("death")) {
       state = "death";
       currentFrame = 0;
       frameCounter = 0;
+      sDeath.play();
     }
   }
+
 
   void jump() {
     if (!jumping && !state.equals("death")) {

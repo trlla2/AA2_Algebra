@@ -1,3 +1,5 @@
+import processing.sound.*;
+
 class Enemy {
   float x, y;
   float w = 50;
@@ -9,11 +11,17 @@ class Enemy {
   float speed = 1.5;
   float attackRange = 50;
   float knockbackDistance = 130;
-
-  Enemy(float x, float y) {
+  PApplet app;
+  SoundFile sDeath;
+  
+  Enemy(PApplet app, float x, float y) {
+    this.app = app;
     this.x = x;
     this.y = y;
+  
+    sDeath = new SoundFile(app, "Derrota_Enemigo_Karateka.wav");
   }
+
 
   void update(Player player) {
     if (!alive) return;
@@ -63,10 +71,12 @@ class Enemy {
     } else {
       x -= knockbackDistance;
     }
-
+    
     lives--;
+    
     if (lives <= 0) {
       alive = false;
+      sDeath.play();
     }
   }
 
@@ -101,4 +111,14 @@ class Enemy {
 
     return false;
   }
+  
+  void resetEnemy(float newX, float newY) {
+    x = newX;
+    y = newY;
+    lives = 3;
+    alive = true;
+    attacking = false;
+    wasHitThisAttack = false;
+  }
+
 }
