@@ -1,5 +1,6 @@
 PImage fondo;
 int stage = 1;
+color[] hpColor = new color[3];
 int limitStage = 800;
 boolean levelStarting = true;
 PFont font;
@@ -17,6 +18,12 @@ void setup() {
   noSmooth(); // Desactiva suavizado para pixel art
   buffer = createGraphics(width, height);
   obstacle = new Obstacle();
+  
+  // Set hp color
+  hpColor[0] = color(255,50,255);
+  hpColor[1] = color(255,255,0);
+  hpColor[2] = color(255,255,255);
+
   player = new Player(this);
   enemy = new Enemy(this, 700, height - 320);
   sStageStart = new SoundFile(this, "Inicio_Karateka.wav");
@@ -26,10 +33,22 @@ void setup() {
 void StageRestart() {
   player.x = width - 800;
   player.y = height - 320;
+  
+  
+  if(stage > 5){ // spawn el fantasma y el enemigo
+      obstacle.restart();
+      enemy.resetEnemy(700, height - 320);
+
+  }
+  else if(stage % 2 == 0){ // par spawnea el enemigo
+      enemy.resetEnemy(700, height - 320);
+  }
+  else{ // impar spawnea el fantasma
+      obstacle.restart();
+  }
 
   sStageStart.play();
   levelStarting = true; // Bloquea movimiento
-  enemy.resetEnemy(700, height - 320);
 }
 
 
@@ -109,9 +128,17 @@ void draw() {
     }
   }
   
-  buffer.endDraw();
-  ColorFilter(255, 255, 255);
-
+  buffer.endDraw(); // fin del buffer
+  if(player.lives > 0){
+    int colorR = (int)red(hpColor[player.lives -1]);
+    int colorG = (int)green(hpColor[player.lives -1]);
+    int colorB = (int)blue(hpColor[player.lives -1]);
+    
+    ColorFilter(colorR , colorG, colorB);
+  }
+  else{
+    ColorFilter(255, 255, 255);  // setear color filter al frame
+  }
 }
 
 

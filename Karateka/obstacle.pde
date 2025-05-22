@@ -1,9 +1,10 @@
 class Obstacle {
-  int curve_estate = 1; 
+  int curve_estate = 4; 
   boolean forward = false;
   PVector position;
   float u;
   PImage sprite;
+  boolean isAlive = false;
   
   Interpolation_curve first_curve;
   Interpolation_curve second_curve;
@@ -119,18 +120,24 @@ class Obstacle {
         }
       }
     }
-    println(curve_estate, u);
   }
   
   // pintarlo
   void display(){
-    buffer.pushMatrix(); 
-    buffer.translate(position.x, position.y); 
-    buffer.imageMode(CENTER);
-    buffer.image(sprite, 0, 0, 100, 100);
-    imageMode(CORNER); // reset image mode
-    buffer.imageMode(CORNER);
-    buffer.popMatrix(); 
+    if(isAlive){
+      buffer.pushMatrix(); 
+      buffer.translate(position.x, position.y); 
+      buffer.imageMode(CENTER);
+      buffer.image(sprite, 0, 0, 100, 100);
+      buffer.imageMode(CORNER);
+      buffer.popMatrix(); 
+    }
+  }
+  
+  // reset variables
+  void restart(){
+    isAlive = true;
+    curve_estate = 4; 
   }
   
 }
