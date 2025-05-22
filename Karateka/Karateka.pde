@@ -40,6 +40,7 @@ void draw(){
   if(player.x > limitStage){ // si llega al final del escenario
     println("ChangeStage");
     StageRestart();
+    stage ++;
   }
   
   buffer.endDraw(); // fin del buffer
