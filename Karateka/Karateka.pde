@@ -25,8 +25,10 @@ void StageUpdate(){
   // Update 
   player.update();
   enemy.update(player);
-
-  // DETECCIÓN DE GOLPE AL ENEMIGO
+  // update 
+  obstacle.update();
+  
+  // Comprobar si golpea al enemigo
   if (enemy.isHitBy(player)) {
     enemy.receiveHit(player);
   }
@@ -65,7 +67,7 @@ void StageUpdate(){
   buffer.image(fondo, 0, 0, width, height);
   player.display();
   enemy.display();
-  obstacle.display(buffer);
+  obstacle.display();
 }
 
 
