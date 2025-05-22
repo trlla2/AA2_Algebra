@@ -12,55 +12,50 @@ void setup() {
   fondo = loadImage("Fondo.png");
   noSmooth(); // Desactiva suavizado para pixel art
   buffer = createGraphics(width, height);
-
+  obstacle = new Obstacle();
   player = new Player();
   enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
-
+}
 void StageRestart(){
   player.x =  width - 800;
   player.y = height - 320;
 }
 
 void StageUpdate(){
-  player.update();
-  obstacle.update();
-  
-  buffer.image(fondo, 0, 0, width, height); // Dibuja la imagen escalada como fondo
-  player.display();
-  obstacle.display(buffer);
-}
-
-}
-
-void draw() {
-  buffer.beginDraw();
-
-  // Dibuja fondo
-  buffer.image(fondo, 0, 0, width, height);
-
+  // Update 
   // Actualización y dibujo de jugador
   player.update();
-  player.display();
-
   // Actualización y dibujo del enemigo con IA
   enemy.update(player);
-  enemy.display();
-
+  
   // Comprobar si golpea al enemigo
   if (enemy.isHitBy(player)) {
     enemy.receiveHit(player);
   }
 
-  StageUpdate();
-  
   if(player.x > limitStage){ // si llega al final del escenario
     println("ChangeStage");
     StageRestart();
     stage ++;
   }
   
+  // Dibujar
+  buffer.image(fondo, 0, 0, width, height);
+  player.display();
+  enemy.display();
+  player.display();
+
+  obstacle.display(buffer);
+}
+
+
+void draw() {
+  buffer.beginDraw();
+
+  StageUpdate();
+  
   buffer.endDraw(); // fin del buffer
-  ColorFilter(255, 255, 255); 
+  ColorFilter(255, 255, 255);  // setear color filter al frame
 }
 
 
