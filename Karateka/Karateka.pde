@@ -86,10 +86,46 @@ void StageUpdate(){
                        py + ph > ey &&
                        py < ey + eh;
 
-    if (touching) {
-      player.receiveDamage();
+    if (touching && !player.state.equals("attack")) {
+      player.receiveDamageFrom(enemy);
+    
+      // Knockback para el enemigo
+      if (player.x < enemy.x) {
+        enemy.knockbackDirection = 1; // empujado hacia la derecha
+      } else {
+        enemy.knockbackDirection = -1; // empujado hacia la izquierda
+      }
+    
+      enemy.knockbackActive = true;
+      enemy.knockbackCounter = 0;
+    }
+
+
+  }
+  
+  // DETECCIÓN DE COLISIÓN OBSTACLE → JUGADOR
+  if (obstacle.isAlive) {
+    float pw = player.getCurrentFrames()[player.currentFrame].width * player.scaleFactor;
+    float ph = player.getCurrentFrames()[player.currentFrame].height * player.scaleFactor;
+  
+    float px = player.x;
+    float py = player.y;
+  
+    float ox = obstacle.position.x - 50; // porque imagen es de 100x100 y se dibuja con CENTER
+    float oy = obstacle.position.y - 50;
+    float ow = 100;
+    float oh = 100;
+  
+    boolean colliding = px + pw > ox &&
+                        px < ox + ow &&
+                        py + ph > oy &&
+                        py < oy + oh;
+  
+    if (colliding) {
+      player.receiveDamageFromObstacle();
     }
   }
+
 
   // Cambio de fase
   if (player.x > limitStage) {

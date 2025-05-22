@@ -36,6 +36,12 @@ class Player {
   int damageCounter = 0;
   boolean damagedRecently = false;
   
+  float knockbackDistance = 100;
+  boolean knockbackActive = false;
+  int knockbackFrames = 10;
+  int knockbackCounter = 0;
+  int knockbackDirection = 0; // -1 = izquierda, 1 = derecha
+
   // Sonidos
   SoundFile sAttackHit;
   SoundFile sAttackMiss;
@@ -72,7 +78,7 @@ class Player {
     return frames;
   }
   
-  void receiveDamage() {
+  void receiveDamageFromObstacle() {
     if (!damagedRecently && state != "death") {
       lives--;
       if (lives <= 0) {
@@ -82,6 +88,29 @@ class Player {
       damagedRecently = true;
     }
   }
+
+  
+  void receiveDamageFrom(Enemy enemy) {
+    if (!damagedRecently && state != "death") {
+      lives--;
+      if (lives <= 0) {
+        lives = 0;
+        die();
+      }
+      damagedRecently = true;
+  
+      // Knockback según posición del enemigo
+      if (enemy.x < x) {
+        knockbackDirection = 1; // empuja hacia la derecha
+      } else {
+        knockbackDirection = -1; // empuja hacia la izquierda
+      }
+  
+      knockbackActive = true;
+      knockbackCounter = 0;
+    }
+  }
+
 
   void attack() {
     if (!state.equals("death") && !jumping) {
@@ -200,30 +229,50 @@ class Player {
         damageCounter = 0;
       }
     }
+    if (knockbackActive) {
+      x += knockbackDirection * (knockbackDistance / knockbackFrames);
+      knockbackCounter++;
+      if (knockbackCounter >= knockbackFrames) {
+        knockbackActive = false;
+      }
+    }
 
   }
 
   void display() {
-    currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
     PImage img = getCurrentFrames()[currentFrame];
     int newW = img.width * scaleFactor;
     int newH = img.height * scaleFactor;
   
     buffer.pushMatrix();
   
-    
-    buffer.translate(x, y);
-  
     if (!facingRight) {
-      buffer.translate(newW, 0); // reflejo
+      buffer.translate(x + newW, y);
       buffer.scale(-1, 1);
+      buffer.image(img, 0, 0, newW, newH);
+    
+      // Bounding box corregido
+      buffer.noFill();
+      buffer.stroke(0, 255, 0);
+      buffer.strokeWeight(2);
+      buffer.rect(0, 0, newW, newH);
+      buffer.noStroke();
+    
+    } else {
+      buffer.translate(x, y);
+      buffer.image(img, 0, 0, newW, newH);
+    
+      buffer.noFill();
+      buffer.stroke(0, 255, 0);
+      buffer.strokeWeight(2);
+      buffer.rect(0, 0, newW, newH);
+      buffer.noStroke();
     }
+
   
-    buffer.scale(scaleFactor, scaleFactor); // escalado uniforme
-  
-    buffer.image(img, 0, 0);
     buffer.popMatrix();
   }
+
 
 
   PImage[] getCurrentFrames() {
