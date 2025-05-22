@@ -27,6 +27,12 @@ class Player {
   BezierQuadratic bezierY;
 
   int scaleFactor = 6;
+  
+  int maxLives = 3;
+  int lives = 3;
+  int damageCooldown = 120;
+  int damageCounter = 0;
+  boolean damagedRecently = false;
 
   Player() {
     x = width - 800;
@@ -48,6 +54,17 @@ class Player {
       frames[i] = sheet.get(i * w, 0, w, h);
     }
     return frames;
+  }
+  
+  void receiveDamage() {
+    if (!damagedRecently && state != "death") {
+      lives--;
+      if (lives <= 0) {
+        lives = 0;
+        die();
+      }
+      damagedRecently = true;
+    }
   }
 
   void attack() {
@@ -154,6 +171,15 @@ class Player {
     currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
     int spriteWidth = getCurrentFrames()[currentFrame].width * scaleFactor;
     x = constrain(x, 0, width - spriteWidth);
+    
+    if (damagedRecently) {
+      damageCounter++;
+      if (damageCounter >= damageCooldown) {
+        damagedRecently = false;
+        damageCounter = 0;
+      }
+    }
+
   }
 
   void display() {
@@ -161,17 +187,23 @@ class Player {
     PImage img = getCurrentFrames()[currentFrame];
     int newW = img.width * scaleFactor;
     int newH = img.height * scaleFactor;
-
+  
+    buffer.pushMatrix();
+  
+    
+    buffer.translate(x, y);
+  
     if (!facingRight) {
-      buffer.pushMatrix();
-      buffer.translate(x + newW, y);
+      buffer.translate(newW, 0); // reflejo
       buffer.scale(-1, 1);
-      buffer.image(img, 0, 0, newW, newH);
-      buffer.popMatrix();
-    } else {
-      buffer.image(img, x, y, newW, newH);
     }
+  
+    buffer.scale(scaleFactor, scaleFactor); // escalado uniforme
+  
+    buffer.image(img, 0, 0);
+    buffer.popMatrix();
   }
+
 
   PImage[] getCurrentFrames() {
     switch (state) {
