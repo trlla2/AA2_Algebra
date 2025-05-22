@@ -134,52 +134,70 @@ void StageUpdate(){
     StageRestart();
     stage++;
   }
-
+  
   // Dibujo
   buffer.image(fondo, 0, 0, width, height);
   player.display();
   enemy.display();
   obstacle.display();
+  
 }
 
 
 
 void draw() {
   buffer.beginDraw();
-
-  // Si el nivel está empezando, espera a que termine el sonido
-  if (!levelStarting) {
-    StageUpdate();
-    
-     // Score text
-    buffer.textFont(font);
-    buffer.textAlign(CENTER);
-    buffer.textSize(30);
-    buffer.fill(255);
-    buffer.text("Score: " + stage, width*0.5, height*0.1); 
-  } else {
-    buffer.image(fondo, 0, 0, width, height);
-    
-    
-    buffer.textFont(font);
-    buffer.textAlign(CENTER);
-    buffer.textSize(80);
-    buffer.fill(255);
-    buffer.text("Preparate", width*0.5, height*0.5);
-    
-    // Si la música ya no suena, desbloquear
-    if (!sStageStart.isPlaying()) {
-      levelStarting = false;
-    }
-  }
-  
-  if(player.lives <= 0 && !player.sDeath.isPlaying()){ // end text
+  if(player.lives <= 0 && !player.sDeath.isPlaying()){ // end 
+    buffer.background(0);
     buffer.textFont(font);
     buffer.textAlign(CENTER);
     buffer.textSize(80);
     buffer.fill(255);
     buffer.text("The End", width*0.5, height*0.5);
   }
+  else if(stage >= 10){
+  
+    buffer.textFont(font);
+    buffer.textAlign(CENTER);
+    buffer.textSize(30);
+    buffer.fill(255);
+    buffer.text("Score: " + stage, width*0.5, height*0.1); 
+    
+    buffer.background(0);
+    buffer.textFont(font);
+    buffer.textAlign(CENTER);
+    buffer.textSize(80);
+    buffer.fill(255);
+    buffer.text("The End", width*0.5, height*0.5);
+  }
+  else{
+    // Si el nivel está empezando, espera a que termine el sonido
+    if (!levelStarting) {
+      StageUpdate();
+      
+       // Score text
+      buffer.textFont(font);
+      buffer.textAlign(CENTER);
+      buffer.textSize(30);
+      buffer.fill(255);
+      buffer.text("Score: " + stage, width*0.5, height*0.1); 
+    } else {
+      buffer.image(fondo, 0, 0, width, height);
+      
+      
+      buffer.textFont(font);
+      buffer.textAlign(CENTER);
+      buffer.textSize(80);
+      buffer.fill(255);
+      buffer.text("Preparate", width*0.5, height*0.5);
+      
+      // Si la música ya no suena, desbloquear
+      if (!sStageStart.isPlaying()) {
+        levelStarting = false;
+      }
+    }
+  }
+  
   
   
   
