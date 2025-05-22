@@ -119,6 +119,21 @@ void draw() {
     buffer.fill(255);
     buffer.text("The End", width*0.5, height*0.5);
   }
+  else if(stage >= 10){
+  
+    buffer.textFont(font);
+    buffer.textAlign(CENTER);
+    buffer.textSize(30);
+    buffer.fill(255);
+    buffer.text("Score: " + stage, width*0.5, height*0.1); 
+    
+    buffer.background(0);
+    buffer.textFont(font);
+    buffer.textAlign(CENTER);
+    buffer.textSize(80);
+    buffer.fill(255);
+    buffer.text("The End", width*0.5, height*0.5);
+  }
   else{
     // Si el nivel está empezando, espera a que termine el sonido
     if (!levelStarting) {
