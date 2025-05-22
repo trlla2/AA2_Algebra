@@ -1,6 +1,6 @@
 PImage fondo;
 int stage = 1;
-color[] hpColor = new color[2];
+color[] hpColor = new color[3];
 int limitStage = 800;
 
 Obstacle obstacle;
@@ -18,7 +18,7 @@ void setup() {
   enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
   
   // Set hp color
-  hpColor[0] = color(255,0,0);
+  hpColor[0] = color(255,50,255);
   hpColor[1] = color(255,255,0);
   hpColor[2] = color(255,255,255);
 
@@ -85,8 +85,16 @@ void draw() {
   StageUpdate();
   
   buffer.endDraw(); // fin del buffer
-  
-  ColorFilter(255, 255, 255);  // setear color filter al frame
+  if(player.lives > 0){
+    int colorR = (int)red(hpColor[player.lives -1]);
+    int colorG = (int)green(hpColor[player.lives -1]);
+    int colorB = (int)blue(hpColor[player.lives -1]);
+    
+    ColorFilter(colorR , colorG, colorB);
+  }
+  else{
+    ColorFilter(255, 255, 255);  // setear color filter al frame
+  }
 }
 
 

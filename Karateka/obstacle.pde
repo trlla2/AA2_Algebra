@@ -119,7 +119,6 @@ class Obstacle {
         }
       }
     }
-    println(curve_estate, u);
   }
   
   // pintarlo
@@ -128,7 +127,6 @@ class Obstacle {
     buffer.translate(position.x, position.y); 
     buffer.imageMode(CENTER);
     buffer.image(sprite, 0, 0, 100, 100);
-    imageMode(CORNER); // reset image mode
     buffer.imageMode(CORNER);
     buffer.popMatrix(); 
   }
