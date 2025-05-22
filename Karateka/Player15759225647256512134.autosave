@@ -23,14 +23,11 @@ class Player {
   float jumpStartX, jumpStartY, jumpEndX, jumpEndY;
   float jumpControlX, jumpControlY;
 
-  BezierQuadratic bezierX;
-  BezierQuadratic bezierY;
-
   int scaleFactor = 6;
 
   Player() {
-    x = width - 800;
-    y = height - 320;
+    x = width / 2;
+    y = height - 160;
 
     idleFrames   = loadSprites("idle.png", 3);
     runFrames    = loadSprites("run.png", 12);
@@ -80,9 +77,6 @@ class Player {
       jumpEndY = y;
       jumpControlX = (jumpStartX + jumpEndX) / 2;
       jumpControlY = y - 150;
-
-      bezierX = new BezierQuadratic(jumpStartX, jumpControlX, jumpEndX);
-      bezierY = new BezierQuadratic(jumpStartY, jumpControlY, jumpEndY);
     }
   }
 
@@ -117,8 +111,8 @@ class Player {
       }
 
       float t = jumpCounter / float(jumpDuration);
-      x = bezierX.evaluate(t);
-      y = bezierY.evaluate(t);
+      x = bezierPoint(jumpStartX, jumpControlX, jumpControlX, jumpEndX, t);
+      y = bezierPoint(jumpStartY, jumpControlY, jumpControlY, jumpEndY, t);
 
       jumpCounter++;
       if (jumpCounter >= jumpDuration) {
@@ -127,12 +121,11 @@ class Player {
         y = jumpEndY;
       }
 
-      currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
-      int spriteWidth = getCurrentFrames()[currentFrame].width * scaleFactor;
-      x = constrain(x, 0, width - spriteWidth);
+      constrainPosition();
       return;
     }
 
+    // Movimiento lateral
     if (moveLeft) {
       x -= speed;
       facingRight = false;
@@ -145,31 +138,35 @@ class Player {
       state = "idle";
     }
 
+    // Animación de idle/run
     frameCounter++;
     if (frameCounter >= frameDelay) {
       currentFrame = (currentFrame + 1) % getCurrentFrames().length;
       frameCounter = 0;
     }
 
+    constrainPosition();
+  }
+
+  void constrainPosition() {
     currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
     int spriteWidth = getCurrentFrames()[currentFrame].width * scaleFactor;
     x = constrain(x, 0, width - spriteWidth);
   }
 
   void display() {
-    currentFrame = constrain(currentFrame, 0, getCurrentFrames().length - 1);
     PImage img = getCurrentFrames()[currentFrame];
     int newW = img.width * scaleFactor;
     int newH = img.height * scaleFactor;
 
     if (!facingRight) {
-      buffer.pushMatrix();
-      buffer.translate(x + newW, y);
-      buffer.scale(-1, 1);
-      buffer.image(img, 0, 0, newW, newH);
-      buffer.popMatrix();
+      pushMatrix();
+      translate(x + newW / 2, y);
+      scale(-1, 1);
+      image(img, -newW / 2, 0, newW, newH);
+      popMatrix();
     } else {
-      buffer.image(img, x, y, newW, newH);
+      image(img, x, y, newW, newH);
     }
   }
 

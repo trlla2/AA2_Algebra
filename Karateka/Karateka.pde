@@ -1,4 +1,3 @@
-// Fondo
 PImage fondo;
 int stage = 1;
 int limitStage = 800;
@@ -6,6 +5,16 @@ int limitStage = 800;
 Obstacle obstacle;
 
 Player player;
+Enemy enemy;
+
+void setup() {
+  size(1024, 768);
+  fondo = loadImage("Fondo.png");
+  noSmooth(); // Desactiva suavizado para pixel art
+  buffer = createGraphics(width, height);
+
+  player = new Player();
+  enemy = new Enemy(700, height - 320); // Ajusta posición según altura del suelo
 
 void StageRestart(){
   player.x =  width - 800;
@@ -21,20 +30,27 @@ void StageUpdate(){
   obstacle.display(buffer);
 }
 
-void setup(){
-    size(1024,768);
-    fondo = loadImage("Fondo.png");
-    noSmooth(); // Desactiva interpolación borrosa
-    player = new Player();
-    
-    obstacle = new Obstacle();
-    
-    buffer = createGraphics(width, height); //initialize buffer
 }
 
-void draw(){
-  buffer.beginDraw(); // start buffer (todo lo que se tenga de printar tiene que estar dentro del buffer)
-  // todo lo que se tiene que printar se tiene que poner antes un buffer (buffer.rect(...))
+void draw() {
+  buffer.beginDraw();
+
+  // Dibuja fondo
+  buffer.image(fondo, 0, 0, width, height);
+
+  // Actualización y dibujo de jugador
+  player.update();
+  player.display();
+
+  // Actualización y dibujo del enemigo con IA
+  enemy.update(player);
+  enemy.display();
+
+  // Comprobar si golpea al enemigo
+  if (enemy.isHitBy(player)) {
+    enemy.receiveHit(player);
+  }
+
   StageUpdate();
   
   if(player.x > limitStage){ // si llega al final del escenario
@@ -55,13 +71,13 @@ void keyPressed() {
   if (key == ' ') player.jump();
 }
 
+void keyReleased() {
+  if (key == 'a' || key == 'A') player.moveLeft = false;
+  if (key == 'd' || key == 'D') player.moveRight = false;
+}
+
 void mousePressed() {
   if (mouseButton == LEFT) {
     player.attack();
   }
-}
-
-void keyReleased() {
-  if (key == 'a' || key == 'A') player.moveLeft = false;
-  if (key == 'd' || key == 'D') player.moveRight = false;
 }
