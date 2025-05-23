@@ -113,14 +113,14 @@ class Player {
 
 
   void attack() {
-    if (!state.equals("death") && !jumping) {
+    if (!state.equals("death") && !jumping && !state.equals("attack")) {
       state = "attack";
       currentFrame = 0;
       frameCounter = 0;
-  
-      sAttackMiss.play(); // Se reproduce siempre, se sobrescribe si acierta
+      sAttackMiss.play();
     }
   }
+
 
 
   void die() {
