@@ -136,24 +136,24 @@ class Obstacle {
   }
   
   // pintarlo
-  void display() {
-    if (isAlive) {
+  void display(){
+    if(isAlive){
       buffer.pushMatrix(); 
-      buffer.translate(position.x, position.y);
-      buffer.rotate(radians(angle));
+      buffer.translate(position.x, position.y); 
       buffer.imageMode(CENTER);
       buffer.image(sprite, 0, 0, 100, 100);
-  
-      // DEBUG: Dibujar hitbox
-      buffer.noFill();
-      buffer.stroke(0, 0, 255); // Azul para diferenciar
-      buffer.strokeWeight(2);
-      buffer.rectMode(CENTER);
-      buffer.rect(0, 0, 100, 100);
-      buffer.rectMode(CORNER); // Restaurar por si acaso
-      buffer.noStroke();
-  
       buffer.imageMode(CORNER);
+
+      if (showHitboxes) {
+        buffer.noFill();
+        buffer.stroke(0, 0, 255);
+        buffer.strokeWeight(2);
+        buffer.rectMode(CENTER);
+        buffer.rect(0, 0, 100, 100);
+        buffer.rectMode(CORNER);
+        buffer.noStroke();
+      }
+
       buffer.popMatrix(); 
     }
   }

@@ -133,36 +133,27 @@ class Enemy {
 
   void display() {
     buffer.pushMatrix();
-  
+
     int newW = getCurrentFrames()[currentFrame].width * scaleFactor;
     int newH = getCurrentFrames()[currentFrame].height * scaleFactor;
-  
+
     if (facingRight) {
       buffer.translate(x, y);
     } else {
       buffer.translate(x + newW, y);
-      buffer.scale(-1, 1); // Giro horizontal
+      buffer.scale(-1, 1);
     }
-  
+
     PImage img = getCurrentFrames()[currentFrame];
     buffer.image(img, 0, 0, newW, newH);
-  
-    // DEBUG: dibujar área de colisión
-    buffer.noFill();
-    buffer.stroke(255, 0, 0); // rojo
-    buffer.strokeWeight(2);
-    
-    // ya están declaradas antes, solo úsalas:
-    buffer.rect(0, 0, newW, newH);
 
-    
-    if (facingRight) {
+    if (showHitboxes) {
+      buffer.noFill();
+      buffer.stroke(255, 0, 0);
+      buffer.strokeWeight(2);
       buffer.rect(0, 0, newW, newH);
-    } else {
-      buffer.rect(0, 0, newW, newH); // ya invertido con scale
+      buffer.noStroke();
     }
-    
-    buffer.noStroke();
 
     buffer.popMatrix();
   }
