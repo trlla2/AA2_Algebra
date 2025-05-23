@@ -5,6 +5,9 @@ class Obstacle {
   float u;
   PImage sprite;
   boolean isAlive = false;
+  float angle = 0;   
+  float limitAngle = 50;
+  int rotationSpeed = 1;
   
   Interpolation_curve first_curve;
   Interpolation_curve second_curve;
@@ -120,13 +123,24 @@ class Obstacle {
         }
       }
     }
+    
+    
+    if(angle >= limitAngle ){
+      rotationSpeed = -1;
+    }
+    else if(angle <= -limitAngle){
+      rotationSpeed = 1;
+    }
+    
+    angle += rotationSpeed;
   }
   
   // pintarlo
   void display() {
     if (isAlive) {
       buffer.pushMatrix(); 
-      buffer.translate(position.x, position.y); 
+      buffer.translate(position.x, position.y);
+      buffer.rotate(radians(angle));
       buffer.imageMode(CENTER);
       buffer.image(sprite, 0, 0, 100, 100);
   
