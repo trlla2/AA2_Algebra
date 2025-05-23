@@ -5,6 +5,8 @@ int limitStage = 800;
 boolean levelStarting = true;
 boolean endLevel = false;
 PFont font;
+int startDelayTime;
+int delayDuration = 7000;
 import processing.sound.*;
 SoundFile sStageStart;
 
@@ -28,7 +30,7 @@ void setup() {
   player = new Player(this);
   enemy = new Enemy(this, 700, height - 320);
   sStageStart = new SoundFile(this, "Inicio_Karateka.wav");
-  sStageStart.play(); // Sonar al empezar el primer nivel
+  StageRestart(); // Sonar al empezar el primer nivel
   font = createFont("font.TTF", 128);
 }
 void StageRestart() {
@@ -36,16 +38,20 @@ void StageRestart() {
   player.y = height - 320;
   
   
-  if(stage > 5){ // spawn el fantasma y el enemigo
+  if(stage == 9){ // spawn el fantasma y el enemigo
       obstacle.restart();
       enemy.resetEnemy(700, height - 320);
 
   }
-  else if(stage % 2 == 0){ // par spawnea el enemigo
+  else if(stage % 2 != 0){ // par spawnea el enemigo
       enemy.resetEnemy(700, height - 320);
   }
   else{ // impar spawnea el fantasma
       obstacle.restart();
+      enemy.alive = false; // Oculta al enemigo
+      enemy.state = "death";
+      enemy.currentFrame = enemy.getCurrentFrames().length - 1;
+      enemy.x = -9999;
   }
 
   sStageStart.play();
@@ -156,14 +162,14 @@ void draw() {
     buffer.text("The End", width*0.5, height*0.5);
   }
   else if(stage >= 10){
-  
+    buffer.background(0);
+
     buffer.textFont(font);
     buffer.textAlign(CENTER);
     buffer.textSize(30);
     buffer.fill(255);
     buffer.text("Score: " + stage, width*0.5, height*0.1); 
     
-    buffer.background(0);
     buffer.textFont(font);
     buffer.textAlign(CENTER);
     buffer.textSize(80);
@@ -191,10 +197,11 @@ void draw() {
       buffer.fill(255);
       buffer.text("Preparate", width*0.5, height*0.5);
       
-      // Si la música ya no suena, desbloquear
-      if (!sStageStart.isPlaying()) {
+      // Solo desactivar si ha pasado el tiempo y la música ha terminado
+      if (!sStageStart.isPlaying() && millis() - startDelayTime > delayDuration) {
         levelStarting = false;
       }
+
     }
   }
   
