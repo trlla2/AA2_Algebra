@@ -243,25 +243,19 @@ class Player {
     PImage img = getCurrentFrames()[currentFrame];
     int newW = img.width * scaleFactor;
     int newH = img.height * scaleFactor;
-  
+
     buffer.pushMatrix();
-  
+
     if (!facingRight) {
       buffer.translate(x + newW, y);
       buffer.scale(-1, 1);
       buffer.image(img, 0, 0, newW, newH);
-    
-      // Bounding box corregido
-      buffer.noFill();
-      buffer.stroke(0, 255, 0);
-      buffer.strokeWeight(2);
-      buffer.rect(0, 0, newW, newH);
-      buffer.noStroke();
-    
     } else {
       buffer.translate(x, y);
       buffer.image(img, 0, 0, newW, newH);
-    
+    }
+
+    if (showHitboxes) {
       buffer.noFill();
       buffer.stroke(0, 255, 0);
       buffer.strokeWeight(2);
@@ -269,7 +263,6 @@ class Player {
       buffer.noStroke();
     }
 
-  
     buffer.popMatrix();
   }
 

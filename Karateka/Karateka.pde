@@ -7,6 +7,7 @@ boolean endLevel = false;
 PFont font;
 int startDelayTime;
 int delayDuration = 7000;
+boolean showHitboxes = false;
 import processing.sound.*;
 SoundFile sStageStart;
 
@@ -227,6 +228,9 @@ void keyPressed() {
   if (key == 'd' || key == 'D') player.moveRight = true;
   if (key == 'k' || key == 'K') player.die();
   if (key == ' ') player.jump();
+  if (key == 'h' || key == 'H') {
+    showHitboxes = !showHitboxes;  // Alternar visibilidad
+  }
 }
 
 void keyReleased() {
